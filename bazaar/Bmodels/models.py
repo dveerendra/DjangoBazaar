@@ -2,36 +2,39 @@ from django.db import models
 
 # Create your models here.
 class UserInfo(models.Model):
-    UserName = models.CharField(max_length=128)
-    EMailId = models.CharField(max_length = 255)
-    Password = models.CharField(max_length = 255)
-    CompanyName = models.CharField(max_length = 255)
-    Address = models.TextField()
-    Role = models.IntegerField()   # We can define 0--student, 1 -- Teacher, and so on
+    userName = models.CharField(max_length=128)
+    eMailId = models.CharField(max_length = 255)
+    password = models.CharField(max_length = 255)
+    companyName = models.CharField(max_length = 255)
+    address = models.TextField()
+    role = models.IntegerField()   # We can define 0--student, 1 -- Teacher, and so on
     is_active = models.BooleanField()
 
     def __str__(self):
-        return self.UserName
+        return self.userName
+
+class TokenGen(models.Model):
+    Token = models.CharField(max_length=28)
 
 class Item(models.Model):
-    Title = models.CharField(max_length=255)
-    Description = models.TextField()
-    Owner_org_name = models.CharField(max_length=255)
-    License = models.CharField(max_length=255)
-    Free = models.BooleanField()
-    Link = models.TextField()
-    type = models.CharField(max_length=32)   # trail, full version
-    CreatedAt =  models.DateTimeField()
-    LastModified = models.DateField()
-    NumberOfRatings = models.IntegerField()
-    NumberOfLikes = models.IntegerField()
-    Author = models.ForeignKey(UserInfo)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    owner_org_name = models.CharField(max_length=255)
+    license = models.CharField(max_length=255)
+    free = models.BooleanField()
+    link = models.TextField()
+    itemType = models.CharField(max_length=32)   # trail, full version
+    createdAt =  models.DateTimeField()
+    lastModified = models.DateField()
+    numberOfRatings = models.IntegerField()
+    numberOfLikes = models.IntegerField()
+    author = models.ForeignKey(UserInfo)
 
     def __str__(self):
-        return self.Title
+        return self.title
 
     def getLikesOfItem(self):
-        return self.NumberOfLikes
+        return self.numberOfLikes
 
     #def RecentelyCreatedItems():
 
@@ -39,30 +42,30 @@ class Item(models.Model):
         #s = asd;
 
 class Tags(models.Model):
-    Name= models.CharField(max_length=128)
-    CreatedAt = models.DateTimeField()
-    LastModified = models.DateTimeField()
-    Author = models.ForeignKey(UserInfo,related_name='user_id')
-    LastModifiedBy = models.ForeignKey(UserInfo,related_name='modified_by_user_id')
+    name= models.CharField(max_length=128)
+    createdAt = models.DateTimeField()
+    lastModified = models.DateTimeField()
+    author = models.ForeignKey(UserInfo,related_name='user_id')
+    lastModifiedBy = models.ForeignKey(UserInfo,related_name='modified_by_user_id')
 
     def __str__(self):
         return self.Name
 
 class ItemTags(models.Model):
-    ItemId = models.ForeignKey(Item)
-    TagsId = models.ForeignKey(Tags)
+    itemId = models.ForeignKey(Item)
+    tagsId = models.ForeignKey(Tags)
 
 
 
 class Ratings(models.Model):
-    Rate = models.IntegerField()
-    Comments = models.TextField()
-    CreatedAt = models.DateTimeField()
-    Author= models.ForeignKey(UserInfo)
+    rate = models.IntegerField()
+    comments = models.TextField()
+    createdAt = models.DateTimeField()
+    author= models.ForeignKey(UserInfo)
 
     def __str__(self):
         return  self.Rate
 
 class ItemRatings(models.Model):
-    ItemId = models.ForeignKey(Item)
-    RatingsID = models.ForeignKey(Ratings)
+    itemId = models.ForeignKey(Item)
+    ratingsID = models.ForeignKey(Ratings)
