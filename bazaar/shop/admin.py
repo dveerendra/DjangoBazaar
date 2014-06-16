@@ -1,7 +1,7 @@
 from django.contrib import admin
-from Bmodels.models import Item, UserInfo
+from shop.models import Item, UserInfo
 # Register your models here.
 
-class BmodelAdmin(admin.ModelAdmin):
+class shop(admin.ModelAdmin):
     admin.site.register(UserInfo)
     admin.site.register(Item)
