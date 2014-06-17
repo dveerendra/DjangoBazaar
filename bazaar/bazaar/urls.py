@@ -5,6 +5,6 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', include('shop.urls')),
-    url(r'^shop/$', include('shop.urls')),
+    url(r'^shop/', include('shop.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )
