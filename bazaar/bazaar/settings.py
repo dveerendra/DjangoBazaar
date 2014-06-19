@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'south',
     'rest_framework',
     'shop',
+    'api',
 )
 
 MIDDLEWARE_CLASSES = (
