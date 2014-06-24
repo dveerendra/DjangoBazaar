@@ -31,6 +31,7 @@ class MaterialCollections(models.Model):
     cTitle = models.CharField(max_length=255)
     createdAt =  models.DateTimeField(auto_now_add=True)
     lastModified = models.DateField(auto_now_add=True)
+    createdBy = models.ForeignKey(User)
 
 class hasCollection(models.Model):
     parentID = models.ForeignKey(MaterialCollections)
