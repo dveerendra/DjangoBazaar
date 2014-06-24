@@ -8,6 +8,7 @@ from rest_framework import authentication, permissions
 from rest_framework.response import Response
 from django.http import Http404
 
+
 # Create your views here.
 # API-views
 class UserViewSet(viewsets.ModelViewSet):
@@ -31,5 +32,19 @@ class GroupViewSet(viewsets.ModelViewSet):
 class CMSView(APIView):
     permission_classes = (permissions.AllowAny,)    #CHANGE TO AUTHENTICATED LATER
     def get(self, request, cmsurl):
-        return Response(request.path)
+        #get the collection and resource names from url:
+        splitpath = request.path.split('/');
+        splitpath = splitpath[1:]
+
+        #database query based on the words in array goes here###############
+
+        ####################################################################
+
+
+
+        return Response(splitpath)
         #raise Http404
+
+
+
+
