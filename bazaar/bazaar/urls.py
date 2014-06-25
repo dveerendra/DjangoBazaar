@@ -18,7 +18,7 @@ router.register(r'users', UserViewSet)
 router.register(r'groups', GroupViewSet)
 
 urlpatterns = patterns('',
-    url(r'^api/', include(router.urls)),
+    url(r'^api/', include(include('api.urls'))),
     url(r'^$', include('shop.urls')),
     url(r'^shop/', include('shop.urls')),
     url(r'^admin/', include(admin.site.urls)),

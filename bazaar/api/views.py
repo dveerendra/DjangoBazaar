@@ -6,6 +6,7 @@ from api.serializers import UserSerializer, GroupSerializer
 from rest_framework.views import APIView
 from rest_framework import authentication, permissions
 from rest_framework.response import Response
+from shop import models
 from django.http import Http404
 
 
@@ -37,7 +38,7 @@ class CMSView(APIView):
         splitpath = splitpath[1:]
 
         #database query based on the words in array goes here###############
-
+        queryset = models.MaterialCollections.objects.get()
         ####################################################################
 
 

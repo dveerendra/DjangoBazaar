@@ -1,41 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
 import datetime
+from autoslug import AutoSlugField
+
 # Create your models here.
 
-# We should probably use Django's own User Model. Has almost
-# all the info defined here:
-"""
-class UserInfo(models.Model):
-    userName = models.CharField(max_length=128)
-    eMailId = models.CharField(max_length = 255)
-    password = models.CharField(max_length = 255)
-    companyName = models.CharField(max_length = 255)
-    address = models.TextField()
-    role = models.IntegerField()   # We can define 0--student, 1 -- Teacher, and so on
-    is_active = models.BooleanField()
-
-    def __str__(self):
-        return self.userName
-"""
-
-# If this is meant to generate tokens for OAuth2 used in API, the rest-framework
-# will provide generator.
-"""
-class TokenGen(models.Model):ss
-    Token = models.CharField(max_length=28)
-"""
 
 #Collection information is stored in this table
 class MaterialCollections(models.Model):
+    defaultValue = 1
     cTitle = models.CharField(max_length=255)
     createdAt =  models.DateTimeField(auto_now_add=True)
     lastModified = models.DateField(auto_now_add=True)
     createdBy = models.ForeignKey(User)
+    slug = AutoSlugField(populate_from='cTitle')
+
+    def __str__(self):
+        return self.cTitle
 
 class hasCollection(models.Model):
     parentID = models.ForeignKey(MaterialCollections)
-    childID = models.ForeignKey(MaterialCollections)
+    childID = models.ForeignKey(MaterialCollections, related_name='child_id')
 
 # fill in all the details we created for the API-definition
 # and discuss the rating-thumb thing
@@ -51,11 +36,12 @@ class MaterialItem(models.Model):
     lastModified = models.DateField(auto_now_add=True)
     numberOfRatings = models.IntegerField(default=0)
     numberOfLikes = models.IntegerField(default=0)
+    collectionId= models.ForeignKey(MaterialCollections, default=MaterialCollections.defaultValue)
     author = models.ForeignKey(User)
-    collectionId = models.ForeignKey(MaterialCollections)
+    slug = AutoSlugField(populate_from='mTitle')
 
     def __str__(self):
-        return self.title
+        return self.mTitle
 
     def getLikesOfItem(self):
         return self.numberOfLikes
@@ -67,8 +53,8 @@ class Tags(models.Model):
     name = models.CharField(max_length=128)
     createdAt = models.DateTimeField(auto_now_add=True)
     lastModified = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User,related_name='user_id')
-    lastModifiedBy = models.ForeignKey(User,related_name='modified_by_user_id')
+    author = models.ForeignKey(User,related_name='user_id', default=1)
+    lastModifiedBy = models.ForeignKey(User,related_name='modified_by_user_id', default=1)
     ItemTags = models.ManyToManyField(MaterialItem)
 
     def __str__(self):
@@ -110,7 +96,11 @@ class ProviderOrganization(models.Model):
     organizationName = models.CharField(max_length=2000)
     ownerUser = models.ForeignKey(User) #foreign key to the User (CMS user-account)
 
+    def __str__(self):
+        return self.organizationName
+
 #connects the material to the owner organization
 class ownerOfMaterial(models.Model):
     itemId = models.ForeignKey(MaterialItem)
     organizationId = models.ForeignKey(ProviderOrganization)
+
