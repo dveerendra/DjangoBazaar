@@ -34,16 +34,93 @@ class CMSView(APIView):
     permission_classes = (permissions.AllowAny,)    #CHANGE TO AUTHENTICATED LATER
     def get(self, request, cmsurl):
         #get the collection and resource names from url:
-        splitpath = request.path.split('/');
-        splitpath = splitpath[1:]
+        splitpath = request.path.split('/')
+        splitpath = splitpath[3:]
+        splitpath = filter(None,splitpath)
+        tempTokens = []
+        leftoverTokens=[]
+        tempCollections = []
+        jsonResponseStr = []
+        length = 0
 
-        #database query based on the words in array goes here###############
-        queryset = models.MaterialCollections.objects.get()
-        ####################################################################
+        tempCollObj = models.MaterialCollections.objects.get(cTitle=splitpath[0])
+        try:
+            firstToken = models.hasCollection.objects.get(childID=tempCollObj.id)
+            if firstToken:
+                return Response('404')
+        except models.hasCollection.DoesNotExist:
+            #checks whether url has correct collection names or not and if item is specfied then it is saved in leftovertokens variable
+            for eachToken in splitpath:
+                try:
+                    temp = models.MaterialCollections.objects.get(cTitle=eachToken)
+                except models.MaterialCollections.DoesNotExist:
+                    tempTokens.append(eachToken)
 
+            #more than one item is specified in url then error is returned
+            if len(tempTokens) >1:
+                return Response('404')
 
+            if len(tempTokens) ==1:
+                lefttokens = tempTokens
+                if tempTokens[0] !=  splitpath[len(splitpath)-1]:
+                    return Response('404')
 
-        return Response(splitpath)
+                for eachToken in lefttokens:
+                    try:
+                        tempItemObj = models.MaterialItem.objects.get(mTitle=eachToken)
+
+                    except models.MaterialItem.DoesNotExist:
+                        leftoverTokens.append(eachToken)
+
+                if len(leftoverTokens) >0:
+                    return Response('404')
+                #to get all collection objects
+                for eachToken in splitpath[:-1]:
+                    try:
+                        tempCollections.append(models.MaterialCollections.objects.get(cTitle=eachToken))
+                    except models.MaterialCollections.DoesNotExist:
+                        tempTokens.append(eachToken)
+
+                #check all collections are interconnected if more than one collection is specified
+                if len(tempCollections) >1:
+                    length =len(tempCollections)-1
+                    for i in range(length):
+                        try:
+                            temp = models.hasCollection.objects.get(parentID=tempCollections[i].id, childID=tempCollections[i+1].id)
+                        except models.hasCollection.DoesNotExist:
+                            return Response('404')
+
+                    if tempItemObj.collectionId.id == tempCollections[length].id:
+                        jsonResponseStr.append(tempItemObj.mTitle + "  " + tempItemObj.description +"  " + tempItemObj.itemType)
+                    else:
+                        return Response('404')
+                 #if only one collection is present then check it is connected with item
+                elif len(tempCollections) ==1:
+                   if tempItemObj.collectionId.id != tempCollections[0].id:
+                       return Response('404')
+                   else:
+                       jsonResponseStr.append(tempItemObj.mTitle + "  " + tempItemObj.description + "  " +tempItemObj.itemType)
+
+            else:
+                for eachToken in splitpath:
+                    try:
+                        tempCollections.append(models.MaterialCollections.objects.get(cTitle=eachToken))
+                    except models.MaterialCollections.DoesNotExist:
+                        tempTokens.append(eachToken)
+
+                if len(tempCollections) >1:
+                    length =len(tempCollections)-1
+                    for i in range(length):
+                        try:
+                            temp = models.hasCollection.objects.get(parentID=tempCollections[i].id, childID=tempCollections[i+1].id)
+                        except models.hasCollection.DoesNotExist:
+                            return Response('404')
+                    jsonResponseStr.append(tempCollections[length].cTitle + " collection")
+                elif len(tempCollections) ==1:
+                    length =1
+                    jsonResponseStr.append(tempCollections[0].cTitle + " collection")
+
+        return Response(jsonResponseStr)
         #raise Http404
 
 
