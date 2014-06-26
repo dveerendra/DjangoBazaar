@@ -41,6 +41,7 @@ bazaar
         $ easy_install pip
         $ pip install -r requirements/DEVELOPMENT
         $ pip install -r requirements/TESTING
+        $ pip install MySQL-python
         $ npm install
         $ bower install
 
@@ -53,3 +54,10 @@ bazaar
         $ compass watch
 
         $ python manage.py runserver
+
+
+If you find problems with libraries:
+
+        $ sudo ln -s /usr/local/mysql/lib/libmysqlclient.18.dylib /usr/lib/libmysqlclient.18.dylib
+
+
