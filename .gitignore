@@ -4,6 +4,9 @@ Vagrantfile
 *.pyc
 .idea/
 
+### Bower ###
+static/components
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -48,3 +51,6 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+# SASS
+.sass-cache
