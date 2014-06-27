@@ -42,12 +42,13 @@ class CMSView(APIView):
         tempCollections = []
         jsonResponseStr = []
         length = 0
+        try:
+            tempCollObj = models.MaterialCollections.objects.get(cTitle=splitpath[0])
+        except models.MaterialCollections.DoesNotExist:
+            return Response('404')
 
-        tempCollObj = models.MaterialCollections.objects.get(cTitle=splitpath[0])
         try:
             firstToken = models.hasCollection.objects.get(childID=tempCollObj.id)
-            if firstToken:
-                return Response('404')
         except models.hasCollection.DoesNotExist:
             #checks whether url has correct collection names or not and if item is specfied then it is saved in leftovertokens variable
             for eachToken in splitpath:
